@@ -1,6 +1,14 @@
 #include <stdio.h>
 
+#define RED 0
+#define BLACK 1
+
 typedef int KEY_TYPE;
+
+int key_compare(KEY_TYPE *a, KEY_TYPE *b)
+{
+    //TODO
+}
 
 typedef struct _rbtree_node
 {
@@ -73,4 +81,53 @@ void _right_rotate(rbtree *T, rbtree_node *y)
 
     x->right = y;
     y->parent = x;
+}
+
+void rbtree_insert_fixup(rbtree *T, rbtree_node *z)
+{
+    
+}
+
+void rbtree_insert(rbtree *T, rbtree_node *z)
+{
+    rbtree_node *x = T->root;
+    rbtree_node *y = T->nil;
+
+    while (x != T->nil)
+    {
+        y = x;
+        // 如果是自定义类型，可以实现key_compare接口来进行比较
+        if (x->key > z->key)
+        {
+            x = x->right;
+        }
+        else if (x->key < z->key)
+        {
+            x = x->left;
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    z->parent = y;
+    if (y == T->nil)
+    {
+        T->root = z;
+    }
+    else if (z->key > y->key)
+    {
+        y->right = z;
+    }
+    else
+    {
+        y->left = z;
+    }
+
+    z->left = T->nil;
+    z->right = T->nil;
+    z->color = RED;
+
+    rbtree_insert_fixup(T, z);
 }
