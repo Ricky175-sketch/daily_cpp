@@ -6,8 +6,8 @@ typedef int KEY_TYPE;
 
 typedef struct _btree_node
 {
-    struct _btree_node *children[M * 2];
-    KEY_TYPE keys[2 * M - 1];
+    struct _btree_node **children;
+    KEY_TYPE *keys;
 
     int num;
     int is_leaf;
