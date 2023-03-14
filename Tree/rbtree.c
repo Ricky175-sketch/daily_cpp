@@ -85,7 +85,34 @@ void _right_rotate(rbtree *T, rbtree_node *y)
 
 void rbtree_insert_fixup(rbtree *T, rbtree_node *z)
 {
-    
+    while (z->parent->color == RED)
+    {
+        if (z->parent == z->parent->parent->left)
+        {
+            rbtree_node *y = z->parent->parent->right;
+            if (y->color == RED)
+            {
+                z->parent->color = BLACK;
+                y->color = BLACK;
+                z->parent->parent->color = RED;
+
+                z = z->parent->parent;
+            }
+            else
+            {
+                if (z == z->parent->right)
+                {
+                    z = z->parent;
+                    _left_rotate(T, z);
+                }
+
+                z->parent->color = BLACK;
+                z->parent->parent->color = RED;
+                _right_rotate(T, z->parent->parent);
+            }
+        }
+    }
+    T->root->color = BLACK;
 }
 
 void rbtree_insert(rbtree *T, rbtree_node *z)
