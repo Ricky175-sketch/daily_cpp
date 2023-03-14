@@ -32,3 +32,15 @@ btree_node *btree_create_node(int node_num, int is_leaf)
 
     return node;
 }
+
+void btree_destroy_node(btree_node *node)
+{
+    if (node)
+    {
+        if (node->children)
+            free(node->children);
+        if (node->keys)
+            free(node->keys);
+        free(node);
+    }
+}
