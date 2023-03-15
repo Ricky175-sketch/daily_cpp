@@ -10,7 +10,7 @@ typedef struct _btree_node
     struct _btree_node **children;
     KEY_TYPE *keys;
 
-    int num; // 关键字的数量
+    int num;     // 关键字的数量
     int is_leaf; // 1表示是叶子结点 0表示非叶子结点
 } btree_node;
 
@@ -18,18 +18,18 @@ typedef struct _btree
 {
     btree_node *root;
     int t; // 2 * t为该树每个结点最大允许的指针数
-}btree;
+} btree;
 
 btree_node *btree_create_node(int node_num, int is_leaf)
 {
-    btree_node *node = (btree_node*)calloc(1, sizeof(btree_node));
+    btree_node *node = (btree_node *)calloc(1, sizeof(btree_node));
     if (node == NULL)
         return;
 
-    node->children = (btree_node**)calloc(1, 2 * node_num * sizeof(btree_node*));
-    node->keys = (KEY_TYPE*)calloc(1, (2 * node_num - 1) * sizeof(KEY_TYPE));
+    node->children = (btree_node **)calloc(1, 2 * node_num * sizeof(btree_node *));
+    node->keys = (KEY_TYPE *)calloc(1, (2 * node_num - 1) * sizeof(KEY_TYPE));
     node->num = 0;
-    node ->is_leaf = is_leaf;
+    node->is_leaf = is_leaf;
 
     return node;
 }
@@ -103,7 +103,6 @@ void btree_insert_not_full(btree *T, btree_node *x, KEY_TYPE key)
         }
         btree_insert_not_full(T, x->children[i + 1], key);
     }
-
 }
 
 void btree_insert(btree *T, KEY_TYPE key)
@@ -121,7 +120,179 @@ void btree_insert(btree *T, KEY_TYPE key)
         btree_insert_not_full(T, root, key);
 }
 
+void btree_merge(btree *T, btree_node *node, int idx)
+{
+    btree_node *left = node->children[idx];
+    btree_node *right = node->children[idx + 1];
+
+    left->keys[T->t - 1] = node->keys[idx];
+    for (int i = 0; i < T->t - 1; i++)
+        left->keys[T->t + i] = right->keys[i];
+    if (left->is_leaf == 0)
+        for (int i = 0; i < T->t; i++)
+            left->children[T->t + i] = right->children[i];
+
+    btree_destroy_node(right);
+
+    int i = idx + 1;
+    for (; i < node->num; i++)
+    {
+        node->keys[i - 1] = node->keys[i];
+        node->children[i] = node->children[i + 1];
+    }
+    node->children[i + 1] = NULL;
+    node->num--;
+
+    if (node->num == 0)
+    {
+        T->root = left;
+        btree_destroy_node(node);
+    }
+}
+
+void btree_delete_key(btree *T, btree_node *node, KEY_TYPE key)
+{
+    if (node == NULL)
+        return;
+
+    int idx = 0;
+    while (idx < node->num && key > node->keys[idx])
+        idx++;
+
+    if (idx < node->num && key == node->keys[idx])
+    {
+        if (node->is_leaf == 1)
+        {
+            // 要删除的结点为叶子结点
+            for (int i = idx; i < node->num - 1; i++)
+                node->keys[i] = node->keys[i + 1];
+
+            node->keys[node->num - 1] = 0;
+            node->num--;
+
+            if (node->num == 0)
+            {
+                free(node);
+                T->root = NULL;
+            }
+
+            return;
+        }
+        else if (node->children[idx]->num >= T->t)
+        {
+            // 左边的子树关键字数大于M/2-1
+            btree_node *left = node->children[idx];
+            node->keys[idx] = left->keys[left->num - 1];
+
+            btree_delete_key(T, left, left->keys[left->num - 1]);
+        }
+        else if (node->children[idx + 1]->num >= T->t)
+        {
+            // 右边的子树关键字数大于M/2-1
+            btree_node *right = node->children[idx + 1];
+            node->keys[idx] = right->keys[0];
+
+            btree_delete_key(T, right, right->keys[0]);
+        }
+        else
+        {
+            // 相邻的两棵子树关键字数都等于M/2-1
+            btree_merge(T, node, idx);
+            btree_delete_key(T, node->children[idx], key);
+        }
+    }
+    else
+    {
+        // 要删除的关键字不在该结点则向下递归
+        btree_node *child = node->children[idx];
+        if (child == NULL)
+        {
+            printf("Delete key[%d] failed\n", key);
+            return;
+        }
+
+        if (child->num == T->t - 1)
+        {
+            btree_node *left = NULL;
+            btree_node *right = NULL;
+
+            if (idx - 1 >= 0)
+                left = node->children[idx - 1];
+            if (idx + 1 <= node->num)
+                right = node->children[idx + 1];
+
+            if ((left && left->num >= T->t) || (right && right->num >= T->t))
+            {
+                int use_right = 0;
+                if (right)
+                    use_right = 1;
+                if (left && right)
+                    use_right = (right->num > left->num) ? 1 : 0;
+
+                if (right && right->num >= T->t && use_right)
+                {
+                    // 从右子树借一个
+                    child->keys[child->num] = node->keys[idx];
+                    child->children[child->num + 1] = right->children[0];
+                    child->num++;
+
+                    node->keys[idx] = right->keys[0];
+                    for (int i = 0; i < right->num - 1; i++)
+                    {
+                        right->keys[i] = right->keys[i + 1];
+                        right->children[i] = right->children[i + 1];
+                    }
+
+                    right->keys[right->num - 1] = 0;
+                    right->children[right->num - 1] = right->children[right->num];
+                    right->children[right->num] = NULL;
+                    right->num--;
+                }
+                else
+                {
+                    // 从左子树借一个
+                    for (int i = child->num; i > 0; i--)
+                    {
+                        child->keys[i] = child->keys[i - 1];
+                        child->children[i + 1] = child->children[i];
+                    }
+
+                    child->children[1] = child->children[0];
+                    child->children[0] = left->children[left->num];
+                    child->keys[0] = node->keys[idx - 1];
+                    child->num++;
+
+                    node->keys[idx - 1] = left->keys[left->num - 1];
+                    left->keys[left->num - 1] = 0;
+                    left->children[left->num] = NULL;
+                    left->num--;
+                }
+            }
+            else if ((!left || (left->num == T->t - 1)) && (!right || (right->num == T->t - 1)))
+            {
+                if (left && left->num == T->t - 1)
+                {
+                    btree_merge(T, node, idx - 1);
+                    child = left;
+                }
+                else if (right && right->num == T->t - 1)
+                    btree_merge(T, node, idx);
+            }
+        }
+
+        btree_delete_key(T, child, key);
+    }
+}
+
+int btree_delete(btree *T, KEY_TYPE key)
+{
+    if (T->root == NULL)
+        return -1;
+
+    btree_destroy_node(T, T->root, key);
+    return 0;
+}
+
 int main()
 {
-
 }
