@@ -284,6 +284,30 @@ void btree_delete_key(btree *T, btree_node *node, KEY_TYPE key)
     }
 }
 
+void btree_print(btree *T, btree_node *node, int layer)
+{
+    btree_node *t = node;
+    if (t)
+    {
+        printf("\nlayer = %d key_num = %d is_leaf = %d\n", layer, t->num, t->is_leaf);
+        for (int i = 0; i < node->num; i++)
+            printf("%c ", t->keys[i]);
+        puts("");
+
+        printf("%p\n", t);
+        for (int i = 0; i <= 2 * T->t; i++)
+            printf("%p ", t->children[i]);
+        puts("");
+
+        layer++;
+        for (int i = 0; i <= t->num; i++)
+            if (t->children[i])
+                btree_print(T, t->children[i], layer);
+    }
+    else
+        printf("this is a empty tree\n");
+}
+
 int btree_delete(btree *T, KEY_TYPE key)
 {
     if (T->root == NULL)
