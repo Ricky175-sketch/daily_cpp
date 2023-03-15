@@ -293,6 +293,24 @@ int btree_delete(btree *T, KEY_TYPE key)
     return 0;
 }
 
+int btree_bin_search(btree_node *node, int low, int high, KEY_TYPE key)
+{
+    // 二分查找结点
+    if (low > high || low < 0 || high < 0)
+        return -1;
+
+    while (low <= high)
+    {
+        int mid = low + high >> 1;
+        if (key > node->keys[mid])
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+
+    return low;
+}
+
 void btree_print(btree *T, btree_node *node, int layer)
 {
     btree_node *t = node;
