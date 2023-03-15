@@ -24,7 +24,7 @@ btree_node *btree_create_node(int node_num, int is_leaf)
 {
     btree_node *node = (btree_node *)calloc(1, sizeof(btree_node));
     if (node == NULL)
-        return;
+        return NULL;
 
     node->children = (btree_node **)calloc(1, 2 * node_num * sizeof(btree_node *));
     node->keys = (KEY_TYPE *)calloc(1, (2 * node_num - 1) * sizeof(KEY_TYPE));
@@ -289,7 +289,7 @@ int btree_delete(btree *T, KEY_TYPE key)
     if (T->root == NULL)
         return -1;
 
-    btree_destroy_node(T, T->root, key);
+    btree_delete_key(T, T->root, key);
     return 0;
 }
 
@@ -337,4 +337,26 @@ void btree_print(btree *T, btree_node *node, int layer)
 
 int main()
 {
+    btree T = {0};
+
+	btree_create(&T, 3);
+	srand(48);
+
+	int i = 0;
+	char key[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	for (i = 0;i < 26;i ++) {
+		key[i] = rand() % 1000;
+		printf("%c ", key[i]);
+		btree_insert(&T, key[i]);
+	}
+
+	btree_print(&T, T.root, 0);
+
+	for (i = 0;i < 26;i ++) {
+		printf("\n---------------------------------\n");
+		btree_delete(&T, key[25-i]);
+		btree_print(&T, T.root, 0);
+	}
+
+	return 0;
 }
