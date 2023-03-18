@@ -5,7 +5,11 @@ using namespace std;
 class Perform {
 public:
     void show() {
-        
+        if (show0())
+            playGame();
+        show1();
+        show2();
+        show3();
     }
 
 private:
@@ -52,6 +56,9 @@ protected:
 
 class PerformEx3 : public Perform {
 protected:
+    virtual void show1() {
+        cout << "ex3 show1" << endl;
+    }
     virtual void show2() {
         cout << "ex3 show2" << endl;
     }
@@ -62,5 +69,17 @@ protected:
 
 int main()
 {
+    Perform *p1 = new PerformEx1();
+    p1->show();
+    cout << "====================" << endl;
+
+    Perform *p2 = new PerformEx2();
+    p2->show();
+    cout << "====================" << endl;
+
+    Perform *p3 = new PerformEx3();
+    p3->show();
+    cout << "====================" << endl;
+
     return 0;
 }
