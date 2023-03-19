@@ -61,5 +61,18 @@ private:
 
 int main()
 {
+    DataCenter *center = new DataCenter;
+    IDisplay *da = new DisplayA();
+    IDisplay *db = new DisplayB();
+    IDisplay *dc = new DisplayC();
+    center->attach(da);
+    center->attach(db);
+    center->attach(dc);
+
+    center->notify();
+
+    center->detach(db);
+    center->notify();
+
     return 0;
 }
