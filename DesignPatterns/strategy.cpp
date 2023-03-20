@@ -55,5 +55,9 @@ private:
 
 int main()
 {
-
+    Context ctx;
+    ProStrategy *s = new VAC_Labor1();
+    Promotion *p = new Promotion(s);
+    p->CalcPromotion(ctx);
+    return 0;
 }
