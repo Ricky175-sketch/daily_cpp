@@ -126,18 +126,43 @@
 // std::atomic<Singleton*> Singleton::_instance;
 // std::mutex Singleton::_mutex; // 初始化互斥锁
 
-// C++11 magic static特性：如果当变量在初始化的时候，并发同时进入声明语句，并发线程将会阻塞等待初始化结束
+// // C++11 magic static特性：如果当变量在初始化的时候，并发同时进入声明语句，并发线程将会阻塞等待初始化结束
+// class Singleton
+// {
+// public:
+//     static Singleton & getInstance()
+//     {
+//         static Singleton instance;
+//         return instance;
+//     }
+// private:
+//     Singleton() {}
+//     ~Singleton() {}
+//     Singleton(const Singleton &) {}
+//     Singleton& operator=(const Singleton &) {}
+// };
+
+template<typename T>
 class Singleton
 {
 public:
-    static Singleton & getInstance()
-    {
-        static Singleton instance;
+    static T& getInstance() {
+        static T instance; // 如果要初始化DesignPattern，需要调用DesignPattern的构造函数，同时会调用父类的构造函数
         return instance;
     }
-private:
-    Singleton() {}
-    ~Singleton() {}
+protected:
+    virtual ~Singleton() {}
+    Singleton() {} // 构造函数声明为protected，才能让别人继承
     Singleton(const Singleton &) {}
     Singleton& operator=(const Singleton &) {}
+};
+class DesignPattern : public Singleton<DesignPattern>
+{
+    friend class Singleton<DesignPattern>; // friend能让Singleton<T>访问到DesignPattern构造函数
+public:
+    ~DesignPattern() {}
+private:
+    DesignPattern() {}
+    DesignPattern(const DesignPattern&) {}
+    DesignPattern& operator=(const DesignPattern&) {}
 };
