@@ -4,14 +4,14 @@
 class IExport
 {
 public:
-    virtual bool export(const std::string &data) = 0;
+    virtual bool Export(const std::string &data) = 0;
     virtual ~IExport() {}
 };
 
 class ExportXml : public IExport
 {
 public:
-    virtual bool export(const std::string &data)
+    virtual bool Export(const std::string &data)
     {
         return true;
     }
@@ -20,7 +20,7 @@ public:
 class ExportJson : public IExport
 {
 public:
-    virtual bool export(const std::string &data)
+    virtual bool Export(const std::string &data)
     {
         return true;
     }
@@ -29,7 +29,7 @@ public:
 class ExportTxt : public IExport
 {
 public:
-    virtual bool export(const std::string &data)
+    virtual bool Export(const std::string &data)
     {
         return true;
     }
@@ -38,7 +38,7 @@ public:
 class ExportCSV : public IExport
 {
 public:
-    virtual bool export(const std::string &data)
+    virtual bool Export(const std::string &data)
     {
         return true;
     }
@@ -47,14 +47,14 @@ public:
 class IImport
 {
 public:
-    virtual bool import(const std::string &data) = 0;
+    virtual bool Import(const std::string &data) = 0;
     virtual ~IImport() {}
 };
 
 class ImportXml : public IImport
 {
 public:
-    virtual bool import(const std::string &data)
+    virtual bool Import(const std::string &data)
     {
         return true;
     }
@@ -63,7 +63,7 @@ public:
 class ImportJson : public IImport
 {
 public:
-    virtual bool import(const std::string &data)
+    virtual bool Import(const std::string &data)
     {
         return true;
     }
@@ -72,7 +72,7 @@ public:
 class ImportTxt : public IImport
 {
 public:
-    virtual bool import(const std::string &data)
+    virtual bool Import(const std::string &data)
     {
         return true;
     }
@@ -81,7 +81,7 @@ public:
 class ImportCSV : public IImport
 {
 public:
-    virtual bool import(const std::string &data)
+    virtual bool Import(const std::string &data)
     {
         return true;
     }
@@ -108,17 +108,17 @@ public:
             this->_import = nullptr;
         }
     }
-    bool export(const std::string &data)
+    bool Export(const std::string &data)
     {
         if (this->_export == nullptr)
             this->_export = this->newExport();
-        return this->_export->export(data);
+        return this->_export->Export(data);
     }
-    bool import(const std::string &data)
+    bool Import(const std::string &data)
     {
         if (this->_import == nullptr)
             this->_import = this->newImport();
-        return this->_import->import(data);
+        return this->_import->Import(data);
     }
 
 protected:
@@ -207,5 +207,9 @@ protected:
 
 int main()
 {
+    IDataApiFactory *factory = new CSVApiFactory();
+    factory->Import("hello");
+    factory->Export("hello");
+
     return 0;
 }
