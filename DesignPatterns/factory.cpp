@@ -100,3 +100,11 @@ protected:
         return temp;
     }
 };
+
+int main()
+{
+    IExportFactory *factory = new ExportTxtFactory();
+    factory->export("hello");
+
+    return 0;
+}
