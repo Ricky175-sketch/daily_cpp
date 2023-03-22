@@ -35,3 +35,30 @@ public:
         return true;
     }
 };
+
+class IExportFactory
+{
+public:
+    IExportFactory()
+    {
+        this->_export = nullptr;
+    }
+    virtual ~IExportFactory()
+    {
+        if (this->_export)
+        {
+            delete this->_export;
+            this->_export = nullptr;
+        }
+    }
+    bool export(const std::string &data)
+    {
+        if (this->_export == nullptr)
+            this->_export = NewExport();
+        return this->_export->export(data);
+    }
+protected:
+    virtual IExport *NewExport(/* ... */) = 0;
+private:
+    IExport *_export;
+};
