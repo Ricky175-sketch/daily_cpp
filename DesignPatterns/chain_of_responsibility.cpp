@@ -12,14 +12,14 @@ class IHandler
 {
 public:
     virtual ~IHandler() {}
-    void GetNextHandler(IHandler *next)
+    void SetNextHandler(IHandler *next)
     {
-        next = this->next;
+        this->next = next;
     }
     bool Handle(const Context &ctx)
     {
         if (this->CanHandle(ctx))
-            return this->HandlerRequest(ctx);
+            return this->HandleRequest(ctx);
         else if (this->GetNextHandler())
             return this->GetNextHandler()->Handle(ctx);
         else
@@ -27,7 +27,7 @@ public:
         return false;
     }
 protected:
-    virtual bool HandlerRequest(const Context &ctx) = 0;
+    virtual bool HandleRequest(const Context &ctx) = 0;
     virtual bool CanHandle(const Context &ctx) = 0;
     IHandler *GetNextHandler()
     {
@@ -43,6 +43,7 @@ protected:
     virtual bool HandleRequest(const Context &ctx)
     {
         // 自己的处理逻辑
+        std::cout << "Main Program" << std::endl;
         return true;
     }
     virtual bool CanHandle(const Context &ctx)
@@ -53,10 +54,12 @@ protected:
     }
 };
 
-class HandleByProjMgr : public IHandler {
+class HandleByProjMgr : public IHandler
+{
 protected:
     virtual bool HandleRequest(const Context &ctx)
     {
+        std::cout << "Project Manager" << std::endl;
         return true;
     }
     virtual bool CanHandle(const Context &ctx)
@@ -67,10 +70,12 @@ protected:
     }
 };
 
-class HandleByBoss : public IHandler {
+class HandleByBoss : public IHandler
+{
 protected:
     virtual bool HandleRequest(const Context &ctx)
     {
+        std::cout << "Boss" << std::endl;
         return true;
     }
     virtual bool CanHandle(const Context &ctx)
@@ -80,3 +85,18 @@ protected:
         return false;
     }
 };
+
+int main()
+{
+    IHandler *h1 = new HandleByMainProgram();
+    IHandler *h2 = new HandleByProjMgr();
+    IHandler *h3 = new HandleByBoss();
+    h1->SetNextHandler(h2);
+    h2->SetNextHandler(h3);
+
+    Context ctx = Context();
+    ctx.day = 15;
+    h1->Handle(ctx);
+
+    return 0;
+}
