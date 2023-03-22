@@ -30,7 +30,10 @@ protected:
 class CalcMonthBonus : public CalcBonus
 {
 public:
-    CalcMonthBonus(CalcBonus *c) : CalcBonus(c) {}
+    CalcMonthBonus(CalcBonus *c) : CalcBonus(c)
+    {
+        std::cout << "compose CalcMonthBonus" << std::endl;
+    }
     virtual double Calc(Context &ctx)
     {
         double bonus /*= 计算流程忽略*/;
@@ -44,6 +47,7 @@ public:
     CalcSumBonus(CalcBonus *c) : CalcBonus(c) {}
     virtual double Calc(Context &ctx)
     {
+        std::cout << "compose CalcSumBonus" << std::endl;
         double bonus /*= 计算流程忽略*/;
         return bonus + cc->Calc(ctx);
     }
@@ -52,7 +56,10 @@ public:
 class CalcGroupBonus : public CalcBonus
 {
 public:
-    CalcGroupBonus(CalcBonus *c) : CalcBonus(c) {}
+    CalcGroupBonus(CalcBonus *c) : CalcBonus(c)
+    {
+        std::cout << "compose CalcGroupBonus" << std::endl;
+    }
     virtual double Calc(Context &ctx)
     {
         double bonus /*= 计算流程忽略*/;
@@ -63,10 +70,31 @@ public:
 class CalcCycleBonus : public CalcBonus
 {
 public:
-    CalcCycleBonus(CalcBonus *c) : CalcBonus(c) {}
+    CalcCycleBonus(CalcBonus *c) : CalcBonus(c)
+    {
+        std::cout << "compose CalcCycleBonus" << std::endl;
+    }
     virtual double Calc(Context &ctx)
     {
         double bonus /*= 计算流程忽略*/;
         return bonus + cc->Calc(ctx);
     }
 };
+
+int main()
+{
+    Context ctx1;
+    CalcBonus *base1 = new CalcBonus();
+    CalcMonthBonus *mb = new CalcMonthBonus(base1);
+    CalcCycleBonus *cb = new CalcCycleBonus(mb);
+    cb->Calc(ctx1);
+    CalcSumBonus *sb = new CalcSumBonus(cb);
+    sb->Calc(ctx1);
+
+    Context ctx2;
+    CalcBonus *base2;
+    CalcGroupBonus *gb = new CalcGroupBonus(base2);
+    gb->Calc(ctx2);
+
+    return 0;
+}
