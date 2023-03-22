@@ -4,34 +4,34 @@
 class IExport
 {
 public:
-    virtual bool export(const std::string &data) = 0;
+    virtual bool Export(const std::string &data) = 0;
     virtual ~IExport() {}
 };
 
 class ExportXml : public IExport {
 public:
-    virtual bool export(const std::string &data) {
+    virtual bool Export(const std::string &data) {
         return true;
     }
 };
 
 class ExportJson : public IExport {
 public:
-    virtual bool export(const std::string &data) {
+    virtual bool Export(const std::string &data) {
         return true;
     }
 };
 
 class ExportTxt : public IExport {
 public:
-    virtual bool export(const std::string &data) {
+    virtual bool Export(const std::string &data) {
         return true;
     }
 };
 
 class ExportCSV : public IExport {
 public:
-    virtual bool export(const std::string &data) {
+    virtual bool Export(const std::string &data) {
         return true;
     }
 };
@@ -51,11 +51,11 @@ public:
             this->_export = nullptr;
         }
     }
-    bool export(const std::string &data)
+    bool Export(const std::string &data)
     {
         if (this->_export == nullptr)
             this->_export = NewExport();
-        return this->_export->export(data);
+        return this->_export->Export(data);
     }
 protected:
     virtual IExport *NewExport(/* ... */) = 0;
@@ -104,7 +104,7 @@ protected:
 int main()
 {
     IExportFactory *factory = new ExportTxtFactory();
-    factory->export("hello");
+    factory->Export("hello");
 
     return 0;
 }
