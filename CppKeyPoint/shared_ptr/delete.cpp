@@ -16,5 +16,10 @@ int main()
         delete p;
     });
 
+    std::shared_ptr<int> ap(new int[10], [](int *p) {
+        std::cout << "delete array pointer" << std::endl;
+        delete []p;
+    });
+
     return 0;
 }
