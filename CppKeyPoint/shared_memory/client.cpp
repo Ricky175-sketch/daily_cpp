@@ -7,7 +7,7 @@ int main()
     HANDLE hMapFile = OpenFileMapping(
         FILE_MAP_ALL_ACCESS,     // 可读可写
         FALSE,                   // 不继承句柄
-        L"MySharedMemory");      // 共享内存名称
+        TEXT("MySharedMemory"));      // 共享内存名称
 
     if (hMapFile == NULL)
     {
