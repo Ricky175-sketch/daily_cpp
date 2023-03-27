@@ -9,7 +9,7 @@ int main()
         PAGE_READWRITE,       // 可读可写
         0,                    // 内存大小（高位）
         1024,                 // 内存大小（低位）
-        L"MySharedMemory");   // 共享内存名称
+        TEXT("MySharedMemory"));   // 共享内存名称
 
     // 映射共享内存
     LPVOID lpBase = MapViewOfFile(
