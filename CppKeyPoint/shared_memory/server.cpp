@@ -23,6 +23,8 @@ int main()
     char *pData = (char *)lpBase;
     strcpy_s(pData, 1024, "Hello, shared memory!");
 
+    Sleep(20000);
+
     // 解除共享内存映射
     UnmapViewOfFile(lpBase);
 
