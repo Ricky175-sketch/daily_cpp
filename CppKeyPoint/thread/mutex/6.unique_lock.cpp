@@ -43,8 +43,11 @@ int main()
 {
     std::thread t1(producer);
     std::thread t2(consumer);
-    t1.join();
-    t2.join();
+
+    t1.detach();
+    t2.detach();
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
     return 0;
 }
