@@ -77,9 +77,9 @@ public:
     }
 
 private:
-    std::list<T> _queue;                   // ������
-    std::mutex _mutex;                     // �����������������������ʹ��
-    std::condition_variable_any _notEmpty; // ��Ϊ�յ���������
-    std::condition_variable_any _notFull;  // û��������������
-    int _maxSize;                          // ͬ����������size
+    std::list<T> _queue;                   // 缓冲区
+    std::mutex _mutex;                     // 互斥量和条件变量结合起来使用
+    std::condition_variable_any _notEmpty; // 不为空的条件变量
+    std::condition_variable_any _notFull;  // 没有满的条件变量
+    int _maxSize;                          // ͬ同步队列最大的size
 };

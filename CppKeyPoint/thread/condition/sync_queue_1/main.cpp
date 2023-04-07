@@ -28,8 +28,8 @@ void TakeData()
 
 int main(void)
 {
-    std::thread t1(PutData);  // 生产线程
-    std::thread t2(TakeData); // 消费线程
+    std::thread t1(PutData);  // 鐢熶骇绾跨▼
+    std::thread t2(TakeData); // 娑堣垂绾跨▼
 
     t1.join();
     t2.join();

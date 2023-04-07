@@ -73,6 +73,8 @@
         "xlocmon": "cpp",
         "xloctime": "cpp",
         "xtree": "cpp",
-        "condition_variable": "cpp"
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "queue": "cpp"
     }
 }
