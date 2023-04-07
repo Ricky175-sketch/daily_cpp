@@ -1,7 +1,8 @@
 #include <iostream>
 #include <thread>
+#include <atomic>
 
-int counter = 0;
+std::atomic<int> counter(0);
 
 void increment()
 {
@@ -16,7 +17,7 @@ int main()
     t1.join();
     t2.join();
 
-    std::cout << counter << std::endl;
+    std::cout << counter.load() << std::endl;
 
     return 0;
 }
