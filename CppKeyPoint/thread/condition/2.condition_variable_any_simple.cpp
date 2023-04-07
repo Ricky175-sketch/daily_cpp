@@ -4,7 +4,7 @@
 #include <condition_variable>
 
 std::mutex mtx;
-std::condition_variable cv;
+std::condition_variable_any cv;
 bool ready = false;
 
 void worker()
@@ -26,7 +26,7 @@ int main()
 
     // 发送通知
     {
-        std::unique_lock<std::mutex> lock(mtx);
+        std::lock_guard<std::mutex> lock(mtx);
         ready = true;
         cv.notify_one();
         std::cout << "main() signals data ready for processing" << std::endl;
