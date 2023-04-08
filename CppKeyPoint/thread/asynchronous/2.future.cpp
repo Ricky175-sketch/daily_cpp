@@ -18,7 +18,7 @@ int main()
     std::cout << std::endl;
 
     int sum = result.get();
-    std::cout << "Sum = " << sum << std::endl; // 获取异步任务结果
+    std::cout << "Mul = " << sum << std::endl; // 获取异步任务结果
 
     return 0;
 }
