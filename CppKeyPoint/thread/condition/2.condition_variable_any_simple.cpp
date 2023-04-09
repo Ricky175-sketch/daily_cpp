@@ -9,10 +9,10 @@ bool ready = false;
 
 void worker()
 {
-    std::unique_lock<std::mutex> lock(mtx);
+    std::lock_guard<std::mutex> lock(mtx);
     while (!ready)
         // 等待条件变量
-        cv.wait(lock);
+        cv.wait(mtx);
 
     std::cout << "Worker thread is processing data" << std::endl;
 }
