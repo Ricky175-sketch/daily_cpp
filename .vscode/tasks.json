@@ -11,6 +11,7 @@
                 "'-std=c++17'",
                 "${workspaceFolder}/*.cpp",
                 "-o",
+                "-std=c++20",
                 "'main.exe'"
             ],
             "group": "build",
