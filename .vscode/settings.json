@@ -76,6 +76,10 @@
         "condition_variable": "cpp",
         "deque": "cpp",
         "queue": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "coroutine": "cpp",
+        "resumable": "cpp",
+        "future": "cpp",
+        "random": "cpp"
     }
 }
