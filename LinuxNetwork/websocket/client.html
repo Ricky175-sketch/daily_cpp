@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+    <style>
+        #output {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 400px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
+    <label for="serverAddress">Server address:</label>
+    <input type="text" id="serverAddress" value="ws://localhost">
+    <label for="serverPort">Port:</label>
+    <input type="number" id="serverPort" value="3000">
+    <button id="connectBtn">Connect</button>
+    <div id="output"></div>
+    <button id="clearBtn">Clear</button><br>
+    <input type="text" id="message" placeholder="Type your message...">
+    <button id="sendBtn">Send</button>
+
+    <script>
+        function getBrowserInfo() {
+            return {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                vendor: navigator.vendor,
+            };
+        }
+
+        let ws;
+        const serverAddress = document.getElementById('serverAddress');
+        const serverPort = document.getElementById('serverPort');
+        const connectBtn = document.getElementById('connectBtn');
+        const output = document.getElementById('output');
+        const message = document.getElementById('message');
+        const sendBtn = document.getElementById('sendBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        clearBtn.addEventListener('click', () => {
+            output.innerHTML = '';
+        });
+
+        function appendOutput(text) {
+            output.innerHTML += `${text}<br>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        connectBtn.addEventListener('click', () => {
+            const address = `${serverAddress.value}:${serverPort.value}`;
+            ws = new WebSocket(address);
+            connectBtn.disabled = true;
+
+            ws.addEventListener('open', () => {
+                appendOutput(`Connected to server at ${address}`);
+                ws.send(JSON.stringify(getBrowserInfo()));
+            });
+
+            ws.addEventListener('message', (event) => {
+                appendOutput(`Server: ${event.data}`);
+            });
+
+            ws.addEventListener('close', () => {
+                appendOutput('Disconnected from server');
+                connectBtn.disabled = false;
+            });
+
+            ws.addEventListener('error', (event) => {
+                appendOutput('Error: ' + event.message);
+            });
+        });
+
+        sendBtn.addEventListener('click', () => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(message.value);
+                appendOutput(`You: ${message.value}`);
+                message.value = '';
+            } else {
+                appendOutput('Please connect to the server first.');
+            }
+        });
+
+        message.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
